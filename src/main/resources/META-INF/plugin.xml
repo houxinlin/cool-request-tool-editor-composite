@@ -25,6 +25,8 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="Cool RequestDemo" secondary="true"  anchor="right" icon="AllIcons.Ide.ConfigFile"
+                    factoryClass="com.demo.ToolWindow"/>
 
     </extensions>
 </idea-plugin>
