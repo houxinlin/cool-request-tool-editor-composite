@@ -51,7 +51,8 @@ public class ChangeFileTypeAnAction extends ComboBoxAction {
             Project project = e.getProject();
             if (project != null) {
                 fileTypeName = fileType.getName();
-                FileType newFileType = FileTypeManager.getInstance().getFileTypeByExtension(fileType.getName());
+                ConfigState.getInstance().getState().fileTypeName = fileTypeName;
+                FileType newFileType = FileTypeManager.getInstance().getStdFileType(fileType.getName());
                 documentContent1 = DiffContentFactory.getInstance().create(project, documentContent1.getDocument(), newFileType);
                 documentContent2 = DiffContentFactory.getInstance().create(project, documentContent2.getDocument(), newFileType);
                 SimpleDiffRequest simpleDiffRequest = new SimpleDiffRequest("Diff", documentContent1, documentContent2, "First", "Second");
@@ -64,7 +65,9 @@ public class ChangeFileTypeAnAction extends ComboBoxAction {
     @Override
     public void updateCustomComponent(@NotNull JComponent component, @NotNull Presentation presentation) {
         super.updateCustomComponent(component, presentation);
-        presentation.setText(fileTypeName);
+        String name = ConfigState.getInstance().getState().fileTypeName;
+        if (name == null) name = fileTypeName;
+        presentation.setText(name);
     }
 
     @Override

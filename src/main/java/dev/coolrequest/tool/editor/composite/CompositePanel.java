@@ -9,6 +9,8 @@ import com.intellij.diff.util.DiffUserDataKeys;
 import com.intellij.diff.util.Side;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
@@ -27,8 +29,18 @@ public class CompositePanel extends JPanel implements CoolToolPanel {
     public JPanel createPanel() {
         Document document1 = EditorFactory.getInstance().createDocument(StringUtil.convertLineSeparators(""));
         Document document2 = EditorFactory.getInstance().createDocument(StringUtil.convertLineSeparators(""));
-        DocumentContent documentContent = DiffContentFactory.getInstance().create(project, document1);
-        DocumentContent documentContent2 = DiffContentFactory.getInstance().create(project, document2);
+
+        DocumentContent documentContent;
+        DocumentContent documentContent2;
+        if (ConfigState.getInstance().getState().fileTypeName != null) {
+            FileType newFileType = FileTypeManager.getInstance().getStdFileType(ConfigState.getInstance().getState().fileTypeName);
+            documentContent = DiffContentFactory.getInstance().create(project, document1, newFileType);
+            documentContent2 = DiffContentFactory.getInstance().create(project, document2, newFileType);
+        } else {
+            documentContent = DiffContentFactory.getInstance().create(project, document1);
+            documentContent2 = DiffContentFactory.getInstance().create(project, document2);
+        }
+
         SimpleDiffRequest request = new SimpleDiffRequest("Diff", documentContent, documentContent2, "First", "Second");
         request.putUserData(DiffUserDataKeys.FORCE_READ_ONLY, false);
         request.putUserData(DiffUserDataKeys.FORCE_READ_ONLY_CONTENTS, new boolean[]{false, false});
